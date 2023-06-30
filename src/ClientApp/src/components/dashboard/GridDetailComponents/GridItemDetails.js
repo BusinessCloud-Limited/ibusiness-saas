@@ -4,6 +4,7 @@ import Statusbar from "../Statusbar";
 import DetailsRightBar from "./DetailsRightBar";
 import MenusGroupComponent from "../Menus/MenusGroupComponent";
 import SkeletonDetail from "../Skeletons/SkeletonDetail";
+import SkeletonRightDetail from "../Skeletons/SkeletonRightDetail";
 
 const GridItemDetails = ({
   heading,
@@ -26,11 +27,15 @@ const GridItemDetails = ({
           {data ? (
             <GridItemContent data={data} title={title} />
           ) : (
-            [1, 2, 3, 4, 5].map((n) => <SkeletonDetail key={n} />)
+            <SkeletonDetail />
           )}
         </article>
         <article className="w-full px-2 md:w-3/12 lg:px-5 ">
-          <DetailsRightBar customAction={customAction} />
+          {customAction ? (
+            <DetailsRightBar customAction={customAction} />
+          ) : (
+            <SkeletonRightDetail />
+          )}
         </article>
       </section>
       <Statusbar heading={heading} company={company} />

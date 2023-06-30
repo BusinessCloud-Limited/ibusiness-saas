@@ -11,7 +11,7 @@
 
 .skeleton.title{
     width: 50%;
-    height: 20px;
+    height: 15px;
     margin-bottom: 15px;
 }
 
@@ -27,28 +27,13 @@
 }
 
 .skeleton-wrapper{
-    margin: 20px auto;
+ 
     padding: 10px 15px;
     position: relative;
     overflow: hidden;
-   
-}
-
-/* Detail section */
-.skeleton-detail{
-    display: flex;
     width: 100%;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 20px;
 }
 
-.skeleton-wrapper.card{
-    width: 45%;
-    position: relative;
-    overflow: hidden;
-
-}
 
 /* Shimmer sectiom */
 .shimmer-wrapper{

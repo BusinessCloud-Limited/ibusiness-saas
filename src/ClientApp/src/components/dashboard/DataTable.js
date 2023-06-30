@@ -1,4 +1,4 @@
-import React, { memo, useRef, useState } from "react";
+import React, { memo, useCallback, useMemo, useRef, useState } from "react";
 import "devextreme/data/odata/store";
 import DataGrid, {
   Pager,
@@ -26,7 +26,6 @@ const DataTable = ({
   columns,
   route,
   keyExpr,
-  loading,
   openConfirmationPopup,
   filterValues,
 }) => {
@@ -34,83 +33,95 @@ const DataTable = ({
 
   const dataGridRef = useRef(null);
 
-  const exportFormats = ["xlsx", "pdf"];
+  const exportFormats = useMemo(() => {
+    return ["xlsx", "pdf"];
+  }, []);
 
-  const pageSizes = [10, 25, 50, 100];
+  const pageSizes = useMemo(() => {
+    return [10, 25, 50, 100];
+  }, []);
 
-  function onContentReady(e) {
-    getDataGridRef(dataGridRef.current);
-    if (!collapsed) {
-      e.component.expandRow(["EnviroCare"]);
-      setCollapsed({
-        collapsed: true,
-      });
-    }
-  }
+  const onContentReady = useCallback(
+    (e) => {
+      getDataGridRef(dataGridRef.current);
+      if (!collapsed) {
+        e.component.expandRow(["EnviroCare"]);
+        setCollapsed({
+          collapsed: true,
+        });
+      }
+    },
+    [collapsed]
+  );
 
-  const handleContextMenuPreparing = (e) => {
-    if (e.row && e.row.rowType === "data") {
-      if (!e.items) e.items = [];
-      e.items.push(
-        {
-          text: "Edit",
-          icon: "edit",
-          onItemClick: () => {
-            startEdit(e.row);
-          },
-        },
-        {
-          text: "Export",
-          icon: "export",
-          items: [
-            {
-              text: "Export all data to Excel",
-              icon: "exportxlsx",
-              onItemClick: () => {
-                handleExporting("Export all data to Excel");
-              },
+  const handleContextMenuPreparing = useCallback(
+    (e) => {
+      if (e.row && e.row.rowType === "data") {
+        if (!e.items) e.items = [];
+        e.items.push(
+          {
+            text: "Edit",
+            icon: "edit",
+            onItemClick: () => {
+              startEdit(e.row);
             },
-            {
-              text: "Export all data to PDF",
-              icon: "exportpdf",
-              onItemClick: () => {
-                handleExporting("Export all data to PDF");
-              },
-            },
-          ],
-        },
-        {
-          text: "Delete",
-          icon: "trash",
-          onItemClick: () => {
-            openConfirmationPopup(e.row);
           },
-        }
-      );
-    }
-  };
+          {
+            text: "Export",
+            icon: "export",
+            items: [
+              {
+                text: "Export all data to Excel",
+                icon: "exportxlsx",
+                onItemClick: () => {
+                  handleExporting("Export all data to Excel");
+                },
+              },
+              {
+                text: "Export all data to PDF",
+                icon: "exportpdf",
+                onItemClick: () => {
+                  handleExporting("Export all data to PDF");
+                },
+              },
+            ],
+          },
+          {
+            text: "Delete",
+            icon: "trash",
+            onItemClick: () => {
+              openConfirmationPopup(e.row);
+            },
+          }
+        );
+      }
+    },
+    [openConfirmationPopup, startEdit]
+  );
 
-  const handleHyperlinkClick = (e) => {
+  const handleHyperlinkClick = useCallback((e) => {
     e.target.style.color = "white";
-  };
+  }, []);
 
-  const handleFocusedRowChanging = (e) => {
+  const handleFocusedRowChanging = useCallback((e) => {
     const prevRow = e.component.getRowElement(e.prevRowIndex);
     const newRow = e.component.getRowElement(e.newRowIndex);
     prevRow[0].children[0].children[0].children[0].children[0].style.color =
       "#489AEE";
     newRow[0].children[0].children[0].children[0].children[0].style.color =
       "white";
-  };
+  }, []);
 
-  const filterBuilder = {
-    logic: "and",
-    filters: filterValues.map(([field, operator, value]) => ({
-      field,
-      operator,
-      value,
-    })),
-  };
+  const filterBuilder = useMemo(() => {
+    return {
+      logic: "and",
+      filters: filterValues.map(([field, operator, value]) => ({
+        field,
+        operator,
+        value,
+      })),
+    };
+  }, [filterValues]);
 
   return (
     <main className="mt-5">
@@ -136,12 +147,6 @@ const DataTable = ({
         columnAutoWidth={true}
         columnHidingEnabled={true}
         ref={dataGridRef}
-        loadPanel={{
-          enabled: true,
-          text: "Loading data...",
-          visible: loading,
-          showPane: true,
-        }}
         onContentReady={onContentReady}
       >
         {columns.map((column) => (
