@@ -9,17 +9,13 @@ public class DatabaseHandler : IDatabaseHandler
     private SqlConnection? _connection;
     private SqlCommand? command;
 
-    private readonly List<Parameter> _parameters;
-
     private string? _connectionString;
 
-    public List<Parameter> Parameters => _parameters;
 
     public int CommandTimeout { get; set; } = 30; //30 seconds as default
 
     public DatabaseHandler(IOptions<SqlOptions> sqloptions)
     {
-        _parameters = new List<Parameter>();
         _connectionString = sqloptions.Value.IbizzSaasConnectionString;
     }
 
@@ -27,20 +23,54 @@ public class DatabaseHandler : IDatabaseHandler
     {
         //clear parameters for further use
         CommandTimeout = 30;
-        _parameters.Clear();
           command?.DisposeAsync();
         _connection?.DisposeAsync();
     }
 
-    public async Task<SqlDataReader> ExecuteProcedureAsync(string procedureQuery, string? conString = null, CommandType cType = CommandType.StoredProcedure)
+    public SqlDataReader ExecuteReader(string procedureQuery, ICollection<Parameter> parameters, string? conString = null, CommandType cType = CommandType.StoredProcedure)
+    {
+        Task<SqlDataReader> task = ExecuteReaderBulk(procedureQuery, parameters, conString, cType);
+        return task.Result;
+    }
+    public async Task<SqlDataReader> ExecuteReaderAsync(string procedureQuery, ICollection<Parameter> parameters, string? conString = null, CommandType cType = CommandType.StoredProcedure)
+    {
+        SqlDataReader reader = await ExecuteReaderBulk(procedureQuery, parameters, conString, cType);
+
+        return reader;
+    }
+
+    private Task<SqlDataReader> ExecuteReaderBulk(string procedureQuery, ICollection<Parameter> parameters, string? conString = null, CommandType cType = CommandType.StoredProcedure)
+    {
+        try
+        {
+            InitializeDataHandler(procedureQuery, parameters, conString, cType);
+
+            if (command is SqlCommand cmd)
+            {
+                Task<SqlDataReader> reader = cmd.ExecuteReaderAsync();
+                return reader;
+            }
+            else
+            {
+                throw new Exception("Reader cannot be null");
+            }
+        }
+        catch
+        {
+            throw;
+        }
+    }
+
+
+    public async Task<SqlDataReader> ExecuteReaderAsync<T>(string procedureQuery, ICollection<Parameter<T>> Tparameters, string? conString = null, CommandType cType = CommandType.StoredProcedure)
     {
         _connectionString = conString ?? _connectionString;
         try
         {
             _connection = new SqlConnection(_connectionString);
             {
-                //Connect to database then read booking records
-               if(_connection.State != ConnectionState.Open)
+                //Open connection to database only when it's closed
+                if (_connection.State != ConnectionState.Open)
                 {
                     await _connection.OpenAsync();
                 }
@@ -50,7 +80,47 @@ public class DatabaseHandler : IDatabaseHandler
                     command.CommandType = cType;
                     command.CommandTimeout = CommandTimeout;
 
-                    foreach (Parameter parameter in _parameters)
+                    foreach (Parameter<T> parameter in Tparameters)
+                    {                   
+                                command.Parameters.AddWithValue(parameter.Name, parameter.Type).Value = parameter.Value;
+
+                    }
+
+                    SqlDataReader reader = await command.ExecuteReaderAsync();
+
+                    return reader;
+                }
+            }
+        }
+        catch (SqlException)
+        {
+            throw;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    private void InitializeDataHandler(string procedureQuery, ICollection<Parameter> parameters, string? conString = null, CommandType cType = CommandType.StoredProcedure)
+    {
+        _connectionString = conString ?? _connectionString;
+        try
+        {
+            _connection = new SqlConnection(_connectionString);
+            {
+                //Open connection to database only when it's closed
+                if (_connection.State != ConnectionState.Open)
+                {
+                    _connection.OpenAsync().Wait();
+                }
+
+                command = new SqlCommand(procedureQuery, _connection);
+                {
+                    command.CommandType = cType;
+                    command.CommandTimeout = CommandTimeout;
+
+                    foreach (Parameter parameter in parameters)
                     {
                         switch (parameter.Type)
                         {
@@ -68,7 +138,12 @@ public class DatabaseHandler : IDatabaseHandler
                                 break;
 
                             case SqlDbType.Money:
+                            case SqlDbType.Decimal:
                                 command.Parameters.AddWithValue(parameter.Name, parameter.Type).Value = decimal.Parse(parameter.Value ?? "-1");
+                                break;
+
+                            case SqlDbType.DateTime:
+                                command.Parameters.AddWithValue(parameter.Name, parameter.Type).Value = DateTime.Parse(parameter.Value ?? "-1");
                                 break;
 
                             default:
@@ -77,10 +152,6 @@ public class DatabaseHandler : IDatabaseHandler
                         }
 
                     }
-
-                    SqlDataReader reader = await command.ExecuteReaderAsync();
-
-                    return reader;
                 }
             }
         }

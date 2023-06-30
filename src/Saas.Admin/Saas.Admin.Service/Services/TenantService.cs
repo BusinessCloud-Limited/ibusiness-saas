@@ -201,9 +201,7 @@ public class TenantService : ITenantService
                 new Parameter{Value =tenant.TimeZone, Name = "timezone", Type=SqlDbType.NVarChar }
             };
 
-            _dbHandler.Parameters.AddRange(parameters);
-
-            using (SqlDataReader reader = await _dbHandler.ExecuteProcedureAsync("spSetUpTenanatDb"))
+            using (SqlDataReader reader = await _dbHandler.ExecuteReaderAsync("spSetUpTenanatDb", parameters))
             {
                 while (reader.Read())
                 {
@@ -230,11 +228,12 @@ public class TenantService : ITenantService
 
             if (result)//Update tenant db initilization complete
             {
-                _dbHandler.Parameters.Add(new Parameter { Name = "databaseName", Type = SqlDbType.NVarChar, Value = tenant.DatabaseName });
-                _dbHandler.Parameters.Add(new Parameter { Name = "sqlregion", Type = SqlDbType.NVarChar, Value = tenant.SqlServerRegion });
-                _dbHandler.Parameters.Add(new Parameter { Name = "tenantId", Type = SqlDbType.UniqueIdentifier, Value = tenant.Guid.ToString() });
+                parameters.Clear();
+                parameters.Add(new Parameter { Name = "databaseName", Type = SqlDbType.NVarChar, Value = tenant.DatabaseName });
+                parameters.Add(new Parameter { Name = "sqlregion", Type = SqlDbType.NVarChar, Value = tenant.SqlServerRegion });
+               parameters.Add(new Parameter { Name = "tenantId", Type = SqlDbType.UniqueIdentifier, Value = tenant.Guid.ToString() });
 
-                using (SqlDataReader reader = await _dbHandler.ExecuteProcedureAsync("spUpateTenantDatabase"))
+                using (SqlDataReader reader = await _dbHandler.ExecuteReaderAsync("spUpateTenantDatabase", parameters))
                 {
                     reader.Read();
 
@@ -271,22 +270,31 @@ public class TenantService : ITenantService
         int responseId = 0;
 
         //Get Region connection string
+        string? regionConString;
 
-        string regionConString = connectionStrings.ContainsKey(tenant.SqlServerRegion ?? "") ? connectionStrings[tenant.SqlServerRegion ?? ""] : connectionStrings[SqlOptions.DefaultDb];
+        if(connectionStrings.ContainsKey(tenant.SqlServerRegion ?? ""))
+        {
+            regionConString = connectionStrings[tenant.SqlServerRegion ?? ""];
+        }
+        else //Privision to the default db if their region does not have an SQL server set up
+        {
+            regionConString = connectionStrings[SqlOptions.DefaultDb];
+            tenant.SqlServerRegion = SqlOptions.DefaultDb;
+        }
+            
 
-        if (string.IsNullOrEmpty(regionConString))
+         if (string.IsNullOrEmpty(regionConString))
         {
             throw new ArgumentNullException("Region cannot be null");
         }
 
         List<Parameter> parameters = new List<Parameter>
         {
-            new Parameter{Value = tenant.DatabaseName, Name = "databaseName", Type = SqlDbType.NVarChar}
+            new Parameter{Value = tenant.DatabaseName??string.Empty, Name = "databaseName", Type = SqlDbType.NVarChar}
         };
-        _dbHandler.Parameters.AddRange(parameters);
         _dbHandler.CommandTimeout = 120;
 
-        using (SqlDataReader reader = await _dbHandler.ExecuteProcedureAsync("spCreateTenantDatabase"))
+        using (SqlDataReader reader = await _dbHandler.ExecuteReaderAsync("spCreateTenantDatabase", parameters))
         {
             reader.Read();
 

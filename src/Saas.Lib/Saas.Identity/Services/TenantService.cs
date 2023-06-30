@@ -21,12 +21,10 @@ public class CustomTenantService : ICustomTenantService
             new Parameter{Value =""+ ICustomTenantService.GetActiveTenantFlag, Name = "Action", Type = SqlDbType.TinyInt}
         };
 
-        _dbHandler.Parameters.AddRange(parameters);
-
         try
         {
             Guid tenantGuid = Guid.Empty;
-            using(SqlDataReader reader = await _dbHandler.ExecuteProcedureAsync("spActiveTenantforUser"))
+            using(SqlDataReader reader = await _dbHandler.ExecuteReaderAsync("spActiveTenantforUser", parameters))
             {
                 
                 while (reader.Read())
@@ -59,12 +57,10 @@ public class CustomTenantService : ICustomTenantService
             new Parameter{Value =tenantId.ToString(), Name = "TenantId", Type = SqlDbType.UniqueIdentifier}
         };
 
-        _dbHandler.Parameters.AddRange(parameters);
-
         try
         {
             bool isSuccess = false;
-            SqlDataReader reader = await _dbHandler.ExecuteProcedureAsync("spActiveTenantforUser");
+            SqlDataReader reader = await _dbHandler.ExecuteReaderAsync("spActiveTenantforUser", parameters);
             reader.Read();
 
             isSuccess = reader.GetInt32(0) == 1;
