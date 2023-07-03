@@ -1,8 +1,10 @@
 ﻿using Microsoft.Data.SqlClient;
 using Saas.Admin.Client;
+using Saas.Shared.DataHandler;
 using Saas.Shared.Options;
 using Saas.SignupAdministration.Web.Services;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -20,9 +22,10 @@ public class TestController : ControllerBase
     private readonly ITokenAcquisition _tokenAcquisition;
     private readonly IUserBookingService _userBookingService;
     private readonly IEnumerable<string> _scopes;
+    private readonly IDatabaseHandler _databaseHandler;
 
 
-    public TestController(IApplicationUser applicationUser, IAdminServiceClient adminServiceClient, IPersistenceProvider persistenceProvider, IConfiguration config, ITokenAcquisition tokenAcquisition, IOptions<SaasAppScopeOptions> scopes, IUserBookingService userBookingService)
+    public TestController(IApplicationUser applicationUser, IAdminServiceClient adminServiceClient, IPersistenceProvider persistenceProvider, IConfiguration config, ITokenAcquisition tokenAcquisition, IOptions<SaasAppScopeOptions> scopes, IUserBookingService userBookingService, IDatabaseHandler databaseHandler)
     {
         _applicationUser = applicationUser;
         _adminServiceClient = adminServiceClient;
@@ -31,6 +34,7 @@ public class TestController : ControllerBase
         _tokenAcquisition = tokenAcquisition;
         _userBookingService = userBookingService;
         _scopes = scopes.Value.Scopes ?? throw new ArgumentNullException($"Scopes must be defined.");
+        _databaseHandler = databaseHandler;
     }
 
     [HttpGet]

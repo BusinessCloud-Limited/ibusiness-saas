@@ -7,7 +7,8 @@ public interface IDatabaseHandler
     public void CloseResources();
 
     public int CommandTimeout { get; set; }
-    public List<Parameter> Parameters { get; }
 
-    public Task<SqlDataReader> ExecuteProcedureAsync(string procedureQuery, string? conString = null, CommandType cType = CommandType.StoredProcedure);
+    public Task<SqlDataReader> ExecuteReaderAsync(string procedureQuery, ICollection<Parameter> parameters, string? conString = null, CommandType cType = CommandType.StoredProcedure);
+    public SqlDataReader ExecuteReader(string procedureQuery, ICollection<Parameter> parameters, string? conString = null, CommandType cType = CommandType.StoredProcedure);
+    public Task<SqlDataReader> ExecuteReaderAsync<T>(string procedureQuery, ICollection<Parameter<T>> Tparameters, string? conString = null, CommandType cType = CommandType.StoredProcedure);
 }

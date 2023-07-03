@@ -106,7 +106,7 @@ builder.Services.AddScoped<IPersistenceProvider, JsonSessionPersistenceProvider>
 builder.Services.AddScoped<IApplicationUser, ApplicationUser>();
 
 //Add database handler. To directly query and a database using stored procedures or direct queries
-builder.Services.AddSingleton<IDatabaseHandler, DatabaseHandler>();
+builder.Services.AddScoped<IDatabaseHandler, DatabaseHandler>();
 
 //Add custom tenant service handler
 builder.Services.AddScoped<ICustomTenantService, CustomTenantService>();

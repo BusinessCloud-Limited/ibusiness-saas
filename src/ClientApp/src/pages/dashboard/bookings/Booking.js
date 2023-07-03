@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { homeMenuSource } from "../../../data/menu";
 import Portal from "../../../components/dashboard/Portal";
@@ -14,32 +15,28 @@ import DataTable from "../../../components/dashboard/DataTable";
 import Statusbar from "../../../components/dashboard/Statusbar";
 import MenusGroupComponent from "../../../components/dashboard/Menus/MenusGroupComponent";
 
+import { getBookings, getFreshBookings } from "../../../redux/api/bookingCall";
+
 const Booking = () => {
-  const [bookings, setBookings] = useState([]);
+  const dispatch = useDispatch();
   const [singleBooking, setSingleBooking] = useState({});
   const [onEditRecordId, setEditRecordId] = useState(null);
   const [selectedRecordId, setSelectedRecordId] = useState(null);
-  // eslint-disable-next-line
-  const [date, setDate] = useState("");
   const [statusMode, setStatusMode] = useState("");
   const [isOpen, setOpen] = useState(false);
+
+  const bookings = useSelector((state) => state.booking.bookings);
 
   const route = Constant.ROUTE.BOOKING;
 
   useEffect(() => {
-    try {
-      const getData = async () => {
-        const url = "/test";
-        const response = await OnboardingService.get(url);
-        setBookings(response);
-      };
-      getData();
-    } catch (error) {
-      console.log(error);
+    if (!bookings || bookings.length < 1) {
+      getBookings(dispatch);
+    } else {
+      getFreshBookings(dispatch);
     }
-
-    return () => {};
-  }, [date]);
+    // eslint-disable-next-line
+  }, [dispatch]);
 
   useEffect(() => {
     const getSingleRecord = async () => {
@@ -147,7 +144,6 @@ const Booking = () => {
           <New
             bookings={bookings}
             singleBooking={singleBooking}
-            setBookings={setBookings}
             handleClose={handleClose}
             title={"Create New Booking"}
             heading={"Booking Item Management"}
@@ -161,7 +157,6 @@ const Booking = () => {
             singleBooking={singleBooking}
             setSingleBooking={setSingleBooking}
             bookings={bookings}
-            setBookings={setBookings}
             handleClose={handleClose}
             title={"Update A Booking Item"}
             heading={"Booking Item Management"}
@@ -182,10 +177,6 @@ const Booking = () => {
           </Portal>
         )
       )}
-      {/* <div>
-      <a data-refid="recordId" data-special-link="true" title="Maurice Nganga" data-navigable="true" target="_blank" data-ownerid="2175:0" data-recordid="0018d00000eyAglAAE" rel="noreferrer" href="/lightning/r/0018d00000eyAglAAE/view" class="slds-truncate outputLookupLink slds-truncate outputLookupLink-0018d00000eyAglAAE-2175:0 forceOutputLookup" data-aura-rendered-by="2186:0" data-aura-class="forceOutputLookup">Maurice Nganga<!--render facet: 2189:0--></a>
-      
-      </div> */}
     </main>
   );
 };

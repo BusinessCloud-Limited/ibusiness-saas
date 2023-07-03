@@ -5,7 +5,7 @@ namespace Saas.SignupAdministration.Web.Controllers;
 
 [Authorize()]
 [ApiController]
-[ValidateAntiForgeryToken]
+//[ValidateAntiForgeryToken]
 // [AuthorizeForScopes(Scopes = new string[] { "tenant.read", "tenant.global.read", "tenant.write", "tenant.global.write", "tenant.delete", "tenant.global.delete" })]
 public class OnboardingWorkflowController : ControllerBase
 {

@@ -93,7 +93,7 @@ builder.Services.AddScoped<IGraphAPIService, GraphAPIService>();
 builder.Services.AddScoped<IPermissionsService, PermissionsService>();
 
 //Add database handler. To directly query and a database using stored procedures or direct queries
-builder.Services.AddSingleton<IDatabaseHandler, DatabaseHandler>();
+builder.Services.AddScoped<IDatabaseHandler, DatabaseHandler>();
 
 //Add custom tenant service handler
 builder.Services.AddScoped<ICustomTenantService, CustomTenantService>();

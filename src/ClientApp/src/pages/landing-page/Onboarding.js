@@ -128,7 +128,9 @@ const Onboarding = () => {
       if (response) {
         setOpen(false);
         setLoading(false);
-        navigate("/dashboard");
+        //Redirect the user to login again 
+        //So that to pick this tenant just onboards. Happens automatically if the user is logged in
+        window.location = process.env.REACT_APP_SIGNUPIN_URL;
       }
     } catch (error) {
       setOpen(false);

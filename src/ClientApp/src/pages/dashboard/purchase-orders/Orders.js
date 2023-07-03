@@ -11,31 +11,32 @@ import FromToDateComponent from "../../../components/dashboard/FromToDateCompone
 import DataTable from "../../../components/dashboard/DataTable";
 import Statusbar from "../../../components/dashboard/Statusbar";
 import MenusGroupComponent from "../../../components/dashboard/Menus/MenusGroupComponent";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getFreshPurchaseOrders,
+  getPurchaseOrders,
+} from "../../../redux/api/purchaseOrderCall";
 
 const Orders = () => {
-  const [data, setData] = useState([]);
+  // eslint-disable-next-line
   const loadingRef = useRef(false);
   // eslint-disable-next-line
   const [onRowClickItem, setRowClickItem] = useState(null);
   const [onRowDblClickBookingId, setRowDblClickBookingId] = useState(null);
-
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const orders = useSelector((state) => state.purchase.orders);
   const route = Constant.ROUTE.ORDER;
 
   useEffect(() => {
-    const getData = async () => {
-      try {
-        const url = "/test2";
-        const response = await OnboardingService.get(url);
-        setData(response);
-        loadingRef.current = false;
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    getData();
-  }, []);
+    if (!orders || orders.length < 1) {
+      getPurchaseOrders(dispatch);
+    } else {
+      getFreshPurchaseOrders(dispatch);
+    }
+    // eslint-disable-next-line
+  }, [dispatch]);
 
   const startEdit = ({ data }) => {
     if (data) {
@@ -90,7 +91,7 @@ const Orders = () => {
           />
           <FromToDateComponent />
           <DataTable
-            data={data}
+            data={orders}
             route={route}
             keyExpr={"orderNumber"}
             columns={orderColumns}

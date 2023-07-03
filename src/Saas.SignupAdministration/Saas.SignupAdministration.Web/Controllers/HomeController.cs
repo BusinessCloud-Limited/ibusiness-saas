@@ -69,7 +69,7 @@ public class HomeController : Controller
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ValidateAntiForgeryToken]
+    //[ValidateAntiForgeryToken]
     public IActionResult GetUser()
     {
         if (User.Identity?.IsAuthenticated ?? false)
