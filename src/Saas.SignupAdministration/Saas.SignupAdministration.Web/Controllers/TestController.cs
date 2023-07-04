@@ -60,7 +60,7 @@ public class TestController : ControllerBase
     {
         GetBooking("tenant_Spike");
 
-        return new JsonResult(GetBooking("tenant_Spike"));
+       // return new JsonResult(GetBooking("tenant_Spike"));
 
         TenantDTO? tenant = _persistenceProvider.Retrieve<TenantDTO>(_applicationUser.EmailAddress);
 
@@ -142,7 +142,7 @@ public class TestController : ControllerBase
 
     private SingleBookingDto GetBookingById(string databaseName, int id)
     {
-        SingleBookingDto booking = null;
+        SingleBookingDto? booking = new SingleBookingDto();
         var sqlConnectionString = _config.GetRequiredSection(SqlOptions.SectionName)
       .Get<SqlOptions>()?.IbizzSaasConnectionString
           ?? throw new NullReferenceException("SQL Connection string cannot be null.");
@@ -207,9 +207,9 @@ public class TestController : ControllerBase
         //Add booking
         GetBooking("tenant_Spike");
 
-        return new JsonResult(GetBookingById("tenant_Spike", id));
+       // return new JsonResult(GetBookingById("tenant_Spike", id));
         TenantDTO? tenant = _persistenceProvider.Retrieve<TenantDTO>(_applicationUser.EmailAddress);
-
+        
         if (tenant == null)
         {
             //Retreieve from database
@@ -251,7 +251,7 @@ public class TestController : ControllerBase
         CreateBooking(booking, "tenant_Spike");
         var results = GetBooking("tenant_Spike");
 
-        return new JsonResult(results.Last());
+       // return new JsonResult(results.Last());
 
         TenantDTO? tenant = _persistenceProvider.Retrieve<TenantDTO>(_applicationUser.EmailAddress);
 
@@ -302,17 +302,7 @@ public class TestController : ControllerBase
         return new JsonResult(bookings);
 
 
-    }
-    [HttpPut]
-
-    public async Task<ActionResult> Put(SingleBookingDto booking)
-    {
-        //Update booking
-
-        var results = UpdateBooking(booking, "tenant_Spike");
-
-        return new JsonResult(results);
-    }
+    } 
 
     private void CreateBooking(Booking booking, string databaseName)
     {

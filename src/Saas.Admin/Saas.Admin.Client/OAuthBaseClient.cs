@@ -38,11 +38,11 @@ public abstract class OAuthBaseClient
 
             return accessToken;
         }
-        catch (MsalUiRequiredException ex)
+        catch (MsalUiRequiredException )
         {
             throw;
         }
-        catch (Exception ex)
+        catch (Exception )
         {
 
             throw;

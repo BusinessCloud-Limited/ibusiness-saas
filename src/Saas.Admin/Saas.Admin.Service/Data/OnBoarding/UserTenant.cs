@@ -5,10 +5,10 @@ namespace Saas.Admin.Service.Data.Models.OnBoarding;
 
 
 [Table("Employee")]
-/// <summary>
-/// A user can belong to zero or many tenants whilst a tenant can have many users
-/// This model is used specifically for that, to hold information that relates a user to a tenant
-/// </summary>
+// <summary>
+// A user can belong to zero or many tenants whilst a tenant can have many users
+// This model is used specifically for that, to hold information that relates a user to a tenant
+// </summary>
 public class UserTenant
 {
 

@@ -4,9 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Saas.Admin.Service.Data.Models.OnBoarding;
 
 [Table("Organization")]
-/// <summary>
-/// Represents a single registered organization/company
-/// </summary>
+
 public class Tenant
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

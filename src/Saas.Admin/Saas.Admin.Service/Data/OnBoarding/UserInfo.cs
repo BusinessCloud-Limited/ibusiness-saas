@@ -4,9 +4,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Saas.Admin.Service.Data.Models.OnBoarding;
 
 [Table("UserInfo")]
-/// <summary>
-/// Used to collect and hold information about any user registered with the system
-/// </summary>
 public class UserInfo
 {
 
