@@ -17,6 +17,8 @@ import ScrollToTop from "./components/frontend/ScrollToTop";
 import { NotFound } from "./pages/landing-page/NotFound";
 import BookingDetail from "./pages/dashboard/bookings/BookingDetail";
 import OrderDetail from "./pages/dashboard/purchase-orders/OrderDetail";
+import SecurityGroup from "./pages/dashboard/users/SecurityGroup";
+import UserGroup from "./pages/dashboard/users/user-groups/UserGroup";
 
 function App() {
   return (
@@ -128,14 +130,32 @@ function App() {
                 }
               />
             </Route>
-            <Route
-              path="profile"
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            ></Route>
+            <Route path="users">
+              <Route
+                path="security-groups"
+                element={
+                  <ProtectedRoute>
+                    <SecurityGroup />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="user-group"
+                element={
+                  <ProtectedRoute>
+                    <UserGroup />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
+            </Route>
           </Route>
           <Route
             path="*"

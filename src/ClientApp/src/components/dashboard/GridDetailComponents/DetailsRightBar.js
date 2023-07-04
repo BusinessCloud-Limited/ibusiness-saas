@@ -23,7 +23,7 @@ const DetailsRightBar = ({ customAction }) => {
   };
 
   return (
-    <main className="flex  flex-col gap-4 box-border">
+    <main className="flex flex-col gap-4 box-border">
       <section className="flex flex-col gap-y-0.5 md:gap-1.5">
         <article className="p-2">
           <div className="flex items-center gap-x-2 font-semibold text-sm">
@@ -42,7 +42,11 @@ const DetailsRightBar = ({ customAction }) => {
           ))}
         </article>
       </section>
-      <CustomActionModal isOpen={isOpen} handleClose={handleClose}>
+      <CustomActionModal
+        title={"Orders Approval"}
+        isOpen={isOpen}
+        handleClose={handleClose}
+      >
         <SalesApprovalComponent handleClose={handleClose} />
       </CustomActionModal>
     </main>
