@@ -31,17 +31,6 @@ public class Test2Controller : ControllerBase
         _userBookingService = userBookingService;
         _scopes = scopes.Value.Scopes ?? throw new ArgumentNullException($"Scopes must be defined.");
     }
-    // GET: api/<TestController>
-    [HttpGet]
-    public async Task<IActionResult> Get()
-    {
-        GetOrder("tenant_Spike");
-
-        return new JsonResult(GetOrder("tenant_Spike"));
-
-
-    }
-
     private List<Dictionary<string, string>> GetOrder(string databaseName)
     {
         List<Dictionary<string, string>> orders = new List<Dictionary<string, string>>();
@@ -87,7 +76,7 @@ public class Test2Controller : ControllerBase
 
     private Order GetBookingById(string databaseName, int id)
     {
-        Order order = null;
+        Order? order = null;
         var sqlConnectionString = _config.GetRequiredSection(SqlOptions.SectionName)
       .Get<SqlOptions>()?.IbizzSaasConnectionString
           ?? throw new NullReferenceException("SQL Connection string cannot be null.");
@@ -131,23 +120,8 @@ public class Test2Controller : ControllerBase
             }
         }
 
-        return order;
+        return order??new Order();
     }
-
-
-    // GET api/<TestController>/5
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Booking>> Get(int id)
-    {
-        //Add booking
-        GetOrder("tenant_Spike");
-
-        return new JsonResult(GetBookingById("tenant_Spike", id));
-
-    }
-
-
-
     // DELETE api/<TestController>/5
     [HttpDelete("{id}")]
     public void Delete(int id)

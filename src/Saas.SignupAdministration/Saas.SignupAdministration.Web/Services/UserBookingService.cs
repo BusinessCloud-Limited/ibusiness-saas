@@ -1,4 +1,5 @@
 ﻿using Microsoft.Azure.Cosmos;
+using System.ComponentModel;
 
 namespace Saas.SignupAdministration.Web.Services;
 
@@ -12,13 +13,13 @@ public class UserBookingService : IUserBookingService
 
 
     // The Cosmos client instance
-    private static CosmosClient cosmosClient;
+    private static CosmosClient? cosmosClient;
 
     // The database we will create
-    private static Database database;
+   // private static Database? database;
 
     // The container we will create.
-    private static Container container;
+    private static Microsoft.Azure.Cosmos.Container? container;
 
     public async Task<Booking> CreateBookingAsync(Booking booking, string partitionKey)
     {
@@ -26,8 +27,9 @@ public class UserBookingService : IUserBookingService
 
         try
         {
-            // Read the item to see if it exists.  
+            // Read the item to see if it exists.          
             ItemResponse<Booking> bookingResponse = await container.CreateItemAsync<Booking>(booking, new PartitionKey(partitionKey));
+          
 
         }
         catch (Exception ex)
@@ -37,8 +39,8 @@ public class UserBookingService : IUserBookingService
         }
 
         return booking;
-    }
-    private void InitializeDatabaseInstance()
+        }
+        private void InitializeDatabaseInstance()
     {
         if (cosmosClient == null)
         {
