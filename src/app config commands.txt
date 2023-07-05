@@ -1,3 +1,0 @@
-dotnet user-secrets set ConnectionStrings:AppConfig "Endpoint=https://appconfig-asdk-dev-lsg5.azconfig.io;Id=lXR9;Secret=bsOy/BeIwfPfCU/6qKMabEEfV01Qgchsh0QyTT3fyew=" --project  ".\Saas.Admin\Saas.Admin.Service\Saas.Admin.Service.csproj"
-
-dotnet user-secrets set ConnectionStrings:AppConfig "Endpoint=https://appconfig-asdk-dev-lsg5.azconfig.io;Id=lXR9;Secret=bsOy/BeIwfPfCU/6qKMabEEfV01Qgchsh0QyTT3fyew=" --project  ".\Saas.SignupAdministration\Saas.SignupAdministration.Web\Saas.SignupAdministration.Web.csproj"

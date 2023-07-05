@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SaaS.SecurityAdmin.Interfaces;
 using SaaS.SecurityAdmin.Models;
@@ -7,42 +8,41 @@ using System.Net;
 namespace SaaS.SecurityAdmin.Controllers;
 [Route("api/Adm/v1/[controller]")]
 [ApiController]
+[Authorize]
+
 public class SecurityGroupsController : ControllerBase
 {
-        private readonly ISecurityGroup _SGService;
-        private DBResponse _DBResponse = new DBResponse();             
-        public SecurityGroupsController(ISecurityGroup SGService)
-        {
-          _SGService = SGService;
-        }
+    private readonly ISecurityGroup _securityGroup;
+    private DBResponse _dbResponse = new();
+
+    public SecurityGroupsController(ISecurityGroup securityGroup)
+    {
+        _securityGroup = securityGroup;
+    }
+
     [HttpPost]
     [Route("Create")]
-    public async Task<IActionResult> Create([FromBody] SecurityGroup _SecurityGroup)
+    public async Task<IActionResult> Create(SecurityGroup group)
     {
-        if (ModelState.IsValid) 
+
+        if (ModelState.IsValid)
         {
-
-
+            try
             {
-                try
-                {
-                    _DBResponse = await _SGService.AddGroupAsync(_SecurityGroup);
-                    return new OkObjectResult(_DBResponse);
-
-                }
-                catch (Exception ex)
-                {                  
-                    _DBResponse.ResponseCode = "02";
-                    _DBResponse.ResponseMsg = "Security group initialization failed with error "+ex.Message;
-                    return new BadRequestObjectResult(_DBResponse);
-                }
-
-
+                _dbResponse = await _securityGroup.AddGroupAsync(group);
+                return new OkObjectResult(_dbResponse);
+            }
+            catch (Exception ex)
+            {
+                _dbResponse.ResponseCode = "02";
+                _dbResponse.ResponseMsg = "Security group initialization failed with error " + ex.Message;
+                return new BadRequestObjectResult(_dbResponse);
             }
 
         }
         else
-        {            
+        {
+
             return new BadRequestResult();
         }
     }

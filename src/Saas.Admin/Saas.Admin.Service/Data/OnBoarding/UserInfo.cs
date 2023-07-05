@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Saas.Admin.Service.Data.Models.OnBoarding;
 
-[Table("UserInfo")]
+[Table("sadUserInfo")]
 public class UserInfo
 {
 

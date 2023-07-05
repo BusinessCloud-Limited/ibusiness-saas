@@ -37,8 +37,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ClientApp", "ClientApp", "{
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "clientapp", "ClientApp\clientapp.esproj", "{C47C6770-0A74-40D3-B6CA-BE76F6D95F54}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TespApiApp", "..\..\..\Personal\Coding\C-sharp\Tests\TespApiApp\TespApiApp.csproj", "{C470C877-853E-4E62-A0A3-F5E3B5FE73BC}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SaaS.SecurityAdmin", "SaaS.SecurityAdmin\SaaS.SecurityAdmin.csproj", "{549DFA0C-1D2A-4970-A72F-D22BC917F0C9}"
 EndProject
 Global

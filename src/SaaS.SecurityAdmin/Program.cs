@@ -1,15 +1,16 @@
-
+using Azure.Identity;
+using Microsoft.Extensions.Configuration.AzureAppConfiguration;
+using Microsoft.Identity.Web;
+using Saas.Shared.DataHandler;
+using Saas.Shared.Options;
+using Saas.SignupAdministration.Web;
+using Saas.SignupAdministration.Web.Models;
 using SaaS.SecurityAdmin.Interfaces;
 using SaaS.SecurityAdmin.Services;
-using Azure.Identity;
 using System.Reflection;
-using Microsoft.Extensions.Configuration.AzureAppConfiguration;
-using Saas.Shared.Options;
-using Saas.Identity.Services;
-using Saas.Shared.DataHandler;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddApplicationInsightsTelemetry();
+
 string projectName = Assembly.GetCallingAssembly().GetName().Name
     ?? throw new NullReferenceException("Project name cannot be null.");
 
@@ -17,8 +18,26 @@ var version = builder.Configuration.GetRequiredSection("Version")?.Value
         ?? throw new NullReferenceException("The Version value cannot be found. Has the 'Version' environment variable been set correctly for the Web App?");
 
 var logger = LoggerFactory.Create(config => config.AddConsole()).CreateLogger(projectName);
+
 logger.LogInformation("Debug edition: 001");
 logger.LogInformation("Version: {version}", version);
+
+/*  IMPORTANT
+    In the configuration pattern used here, we're seeking to minimize the use of appsettings.json, 
+    as well as eliminate the need for storing local secrets. 
+
+    Instead we're utilizing the Azure App Configuration service for storing settings and the Azure Key Vault to store secrets.
+    Azure App Configuration still hold references to the secret, but not the secret themselves.
+
+    This approach is more secure and allows us to have a single source of truth 
+    for all settings and secrets. 
+
+    The settings and secrets are provisioned by the deployment script made available for deploying this service.
+    Please see the readme for the project for details.
+
+    For local development, please see the ASDK Permission Service readme.md for more 
+    on how to set up and run this service in a local development environment - i.e., a local dev machine. 
+*/
 
 if (builder.Environment.IsDevelopment())
 {
@@ -28,50 +47,59 @@ else
 {
     InitializeProdEnvironment();
 }
-// Add the user details that come back from B2C
 
 
-//Add database handler. To directly query and a database using stored procedures or direct queries
-builder.Services.AddScoped<IDatabaseHandler, DatabaseHandler>();
-
-//Add custom tenant service handler
-builder.Services.AddScoped<ICustomTenantService, CustomTenantService>();
-
-builder.Services.Configure<AzureB2CSignupAdminOptions>(
-        builder.Configuration.GetRequiredSection(AzureB2CSignupAdminOptions.SectionName));
-
-
-
-
+// Add services to the container.
 //Sql options
 builder.Services.Configure<SqlOptions>(
             builder.Configuration.GetRequiredSection(SqlOptions.SectionName));
-// Add services to the container.
+// Add authentication for incoming requests
+builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration, AzureB2CAdminApiOptions.SectionName);
+
+builder.Services.AddScoped<IDatabaseHandler, DatabaseHandler>();
+
+builder.Services.AddScoped<IUserGroup, UserGroupService>();
+builder.Services.AddScoped<ISecurityGroup, SecurityGroupService>();
+// Add the user details that come back from B2C
+builder.Services.AddScoped<IApplicationUser, ApplicationUser>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddMemoryCache();
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-builder.Services.AddScoped<ISecurityGroup, SecurityGroupService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    //use cors for development
+    app.UseCors(ops =>
+    {
+        string[] origins = {
+                        "http://localhost:3000",
+                        "http://localhost:3000/",
+                        "https://localhost:3000",
+                        "https://localhost:3000/"
+                    };
+        ops.WithOrigins(origins).AllowCredentials().WithMethods("POST", "GET", "PUT", "DELETE").AllowAnyHeader();
+    });
+
+    app.UseExceptionHandler("/Error");
 }
 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-app.UseAuthentication();
+
 app.MapControllers();
-app.MapControllers();
+
 app.Run();
+
+/*---------------
+  local methods
+----------------*/
+
 void InitializeDevEnvironment()
 {
     // IMPORTANT
@@ -97,7 +125,7 @@ void InitializeDevEnvironment()
 
     builder.Configuration.AddAzureAppConfiguration(options =>
             options.Connect(appConfigurationconnectionString)
-                .ConfigureKeyVault(kv => kv.SetCredential(credential))
+    .ConfigureKeyVault(kv => kv.SetCredential(credential))
             .Select(KeyFilter.Any, version)); // <-- Important: since we're using labels in our Azure App Configuration store
 
     logger.LogInformation($"Initialization complete.");
@@ -124,6 +152,6 @@ void InitializeProdEnvironment()
 
     builder.Configuration.AddAzureAppConfiguration(options =>
         options.Connect(new Uri(appConfigurationEndpoint), userAssignedManagedCredentials)
-            .ConfigureKeyVault(kv => kv.SetCredential(userAssignedManagedCredentials))
+    .ConfigureKeyVault(kv => kv.SetCredential(userAssignedManagedCredentials))
         .Select(KeyFilter.Any, version)); // <-- Important since we're using labels in our Azure App Configuration store
 }

@@ -15,7 +15,7 @@ const CustomActionModal = ({ isOpen, title, handleClose, children }) => {
     >
       <section className="px-5 py-1.5 border-b border-gray-300 flex w-full items-center justify-between sticky inset-x-0 top-0 z-50">
         <h1 className="text-menuHeading  text-sm w-full font-semibold">
-          Approve
+          {title}
         </h1>
         <div className="px:2 md:px-5">
           <MdOutlineClose
