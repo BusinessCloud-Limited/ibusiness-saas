@@ -3,12 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Saas.Admin.Service.Data.Models.OnBoarding;
 
-<<<<<<< HEAD
-/// <summary>
-/// Used to collect and hold information about any user registered with the system
-/// </summary>
-=======
->>>>>>> 7b420a7fe838bf3c89a0ff34968cfd32762daf3e
 [Table("UserInfo")]
 public class UserInfo
 {
