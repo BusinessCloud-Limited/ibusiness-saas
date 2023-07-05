@@ -29,7 +29,7 @@ public class SecurityGroupService : ISecurityGroup
             {
                 new Parameter{Value =_SecurityGroup.GroupCode??string.Empty, Name = "GroupCode", Type=SqlDbType.NVarChar },
                 new Parameter{Value =_SecurityGroup.GroupDesc??string.Empty, Name = "GroupDesc", Type=SqlDbType.NVarChar },
-                new Parameter{Value =_SecurityGroup.Narration ?? string.Empty   , Name = "Narration", Type=SqlDbType.NVarChar },
+                new Parameter{Value =_SecurityGroup.Narration ?? string.Empty   , Name = "Narration", Type=SqlDbType.NVarChar }  ,
                 new Parameter {Name = "UserID", Type = SqlDbType.NVarChar, Value = "mauricenganga41@gmail.com"},
                 new Parameter {Name = "Terminus", Type=SqlDbType.NVarChar,Value = "1"}
             };
@@ -59,12 +59,11 @@ public class SecurityGroupService : ISecurityGroup
         }
         catch (Exception ex)
         {
-            _dbResponse.ResponseCode = "010";
-            _dbResponse.ResponseMsg = ex.Message;
+
+            _dbResponse.ResponseCode = "01";
+            _dbResponse.ResponseMsg = "Creating security group failed with exception " + ex.Message;
             return _dbResponse;
         }
-
-        throw new NotImplementedException();
     }
 
     public async Task<IEnumerable<SecurityGroup>> GetAllGroups()
