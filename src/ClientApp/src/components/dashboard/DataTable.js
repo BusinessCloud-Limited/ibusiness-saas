@@ -154,6 +154,7 @@ const DataTable = ({
             dataField={column.dataField}
             key={column.dataField}
             alignment="left"
+            caption={column.caption}
             cellRender={
               column?.pk === true
                 ? (data) => {
@@ -165,7 +166,7 @@ const DataTable = ({
                           data-column-index={data.columnIndex}
                           className="pk-div"
                         >
-                          <span className="pk-hyperlink">{data.value}</span>
+                          <span className="pk-hyperlink">More...</span>
                         </div>
                       </Link>
                     );

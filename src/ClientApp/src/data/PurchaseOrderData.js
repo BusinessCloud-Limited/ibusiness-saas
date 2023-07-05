@@ -135,7 +135,13 @@ export const columns = [
 // Defines columns used by orders grid
 
 export const orderColumns = [
-  { dataField: "orderNumber", alignment: "left", pk: true },
+  {
+    dataField: "orderNumber",
+    width: 70,
+    alignment: "left",
+    pk: true,
+    caption: "Select",
+  },
   { dataField: "costCenter" },
   { dataField: "supplier" },
   { dataField: "shipsTo" },
@@ -185,6 +191,7 @@ export const bookingColumns = [
     dataField: "bookingId",
     width: 70,
     pk: true,
+    caption: "Select",
   },
   {
     dataField: "retirementSchemeName",

@@ -2,6 +2,7 @@ import Statusbar from "../../components/dashboard/Statusbar";
 import { homeMenuSource } from "../../data/menu";
 import MenusGroupComponent from "../../components/dashboard/Menus/MenusGroupComponent";
 import FromToDateComponent from "../../components/dashboard/FromToDateComponent";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const handleClick = (menu) => {
@@ -28,7 +29,7 @@ const Home = () => {
   };
 
   return (
-    <main className="w-full min-h-full relative  px-3 md:px-5 py-1.5">
+    <main className="dashboard-container">
       <section>
         <section>
           <MenusGroupComponent
@@ -42,6 +43,12 @@ const Home = () => {
           <h1 className="font-bold text-2xl md:text-3xl  text-headingBlue">
             Home page
           </h1>
+          {/* Test code remove in case */}
+          <p>
+            <Link to="/dashboard/users/security-groups">Security group</Link>
+            <Link to="/dashboard/users/user-group">User Group group</Link>
+          </p>
+          {/* //end ot test code */}
         </section>
       </section>
 

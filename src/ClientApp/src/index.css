@@ -119,6 +119,14 @@ body{
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
 }
+/* ...................................... DASHBOARD SECTION ................................. */
+.dashboard-container{
+  width: 100%;
+  min-height: 100%;
+
+  padding:0.375rem 1.25rem;
+
+}
 
 /* DataGrid Styling */
 #dataTableGrid{
@@ -230,7 +238,12 @@ background: radial-gradient(circle, rgba(72,154,238,1) 0%, rgba(255,255,255,1) 1
    
 }
   @media screen and (max-width:480px){
-   
+    .dashboard-container{
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+    
+    }
+
     #bookingGrid{
       height: 70vh;
     

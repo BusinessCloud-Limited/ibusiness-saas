@@ -9,37 +9,7 @@ using SaaS.SecurityAdmin.Interfaces;
 using SaaS.SecurityAdmin.Services;
 using System.Reflection;
 
-using SaaS.SecurityAdmin.Interfaces;
-using SaaS.SecurityAdmin.Services;
-using Azure.Identity;
-using System.Reflection;
-using Microsoft.Extensions.Configuration.AzureAppConfiguration;
-using Saas.Shared.Options;
-using Saas.Identity.Services;
-using Saas.Shared.DataHandler;
-
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddApplicationInsightsTelemetry();
-string projectName = Assembly.GetCallingAssembly().GetName().Name
-    ?? throw new NullReferenceException("Project name cannot be null.");
-
-var version = builder.Configuration.GetRequiredSection("Version")?.Value
-        ?? throw new NullReferenceException("The Version value cannot be found. Has the 'Version' environment variable been set correctly for the Web App?");
-
-var logger = LoggerFactory.Create(config => config.AddConsole()).CreateLogger(projectName);
-logger.LogInformation("Debug edition: 001");
-logger.LogInformation("Version: {version}", version);
-
-if (builder.Environment.IsDevelopment())
-{
-    InitializeDevEnvironment();
-}
-else
-{
-    InitializeProdEnvironment();
-}
-// Add the user details that come back from B2C
-
 
 string projectName = Assembly.GetCallingAssembly().GetName().Name
     ?? throw new NullReferenceException("Project name cannot be null.");
@@ -98,9 +68,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddMemoryCache();
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-builder.Services.AddScoped<ISecurityGroup, SecurityGroupService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -124,9 +91,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-app.UseAuthentication();
+
 app.MapControllers();
-app.MapControllers();
+
 app.Run();
 
 /*---------------
