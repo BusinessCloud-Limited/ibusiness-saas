@@ -1,0 +1,1 @@
+dotnet user-secrets set ConnectionStrings:AppConfig "Endpoint=https://appconfig-asdk-dev-lsg5.azconfig.io;Id=lXR9;Secret=bsOy/BeIwfPfCU/6qKMabEEfV01Qgchsh0QyTT3fyew=" --project  "SaaS.SecurityAdmin"

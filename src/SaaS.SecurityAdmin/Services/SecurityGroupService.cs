@@ -27,9 +27,9 @@ public class SecurityGroupService : ISecurityGroup
 
             List<Parameter> parameters = new()
             {
-                new Parameter { Name = "GroupCode", Type = SqlDbType.NVarChar, Value = _SecurityGroup.GroupCode},
-                new Parameter { Name = "GroupDesc", Type = SqlDbType.NVarChar, Value = _SecurityGroup.GroupDesc},
-                new Parameter { Name = "Narration", Type = SqlDbType.NVarChar, Value = _SecurityGroup.Narration},
+                new Parameter{Value =_SecurityGroup.GroupCode??string.Empty, Name = "GroupCode", Type=SqlDbType.NVarChar },
+                new Parameter{Value =_SecurityGroup.GroupDesc??string.Empty, Name = "GroupDesc", Type=SqlDbType.NVarChar },
+                new Parameter{Value =_SecurityGroup.Narration ?? string.Empty   , Name = "Narration", Type=SqlDbType.NVarChar },
                 new Parameter {Name = "UserID", Type = SqlDbType.NVarChar, Value = "mauricenganga41@gmail.com"},
                 new Parameter {Name = "Terminus", Type=SqlDbType.NVarChar,Value = "1"}
             };
@@ -59,20 +59,12 @@ public class SecurityGroupService : ISecurityGroup
         }
         catch (Exception ex)
         {
-<<<<<<< HEAD
-
-            _DBResponse.ResponseCode = "01";
-            _DBResponse.ResponseMsg = "Creating security group failed with exception " + ex.Message;
-            return _DBResponse;
-        }
-=======
             _dbResponse.ResponseCode = "010";
             _dbResponse.ResponseMsg = ex.Message;
             return _dbResponse;
         }
 
         throw new NotImplementedException();
->>>>>>> security-groups-20230703
     }
 
     public async Task<IEnumerable<SecurityGroup>> GetAllGroups()
