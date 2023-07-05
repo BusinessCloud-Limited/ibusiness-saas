@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SaaS.SecurityAdmin.Interfaces;
 using SaaS.SecurityAdmin.Models;
+using System.Net;
 
 namespace SaaS.SecurityAdmin.Controllers;
 [Route("api/[controller]")]
@@ -27,15 +28,16 @@ public class SecurityGroupsController : ControllerBase
         {
             try 
             {
-                DBResponse _dbResponse = await _securityGroup.AddGroupAsync(group);
+                 _dbResponse = await _securityGroup.AddGroupAsync(group);
                 return new OkObjectResult(_dbResponse);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                _dbResponse.ResponseCode = "010";
-                _dbResponse.ResponseMsg = ex.Message;
+                _dbResponse.ResponseCode = "02";
+                _dbResponse.ResponseMsg = "Security group initialization failed with error " + ex.Message;
                 return new BadRequestObjectResult(_dbResponse);
             }
+          
         }
         else
         {

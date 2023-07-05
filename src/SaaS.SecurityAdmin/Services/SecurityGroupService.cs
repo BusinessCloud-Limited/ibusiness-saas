@@ -4,6 +4,7 @@ using Saas.SignupAdministration.Web;
 using SaaS.SecurityAdmin.Interfaces;
 using SaaS.SecurityAdmin.Models;
 using System.Data;
+using System.Net;
 
 namespace SaaS.SecurityAdmin.Services;
 
@@ -35,21 +36,19 @@ public class SecurityGroupService : ISecurityGroup
 
             using (SqlDataReader reader = await _databaseHandler.ExecuteReaderAsync("spSaveSecurityGroup", parameters))
             {
-                while(reader.Read())
+                while (reader.Read())
                 {
-                    int returnValue = (int)reader["RetValue"];
-                    
-                    if (returnValue == 1)
+                    string RetValue = reader["RetValue"].ToString() ?? string.Empty;
+                    if (RetValue.Equals("1") || RetValue.Equals("2"))
                     {
-                        _dbResponse.ResponseCode = "001";
-                        _dbResponse.ResponseMsg = "Saving security group successful.";
+                        _dbResponse.ResponseCode = "00";
+                        _dbResponse.ResponseMsg = "Security group successfully created";
                     }
-                    if (returnValue == 2)
+                    else
                     {
-                        _dbResponse.ResponseCode = "002";
-                        _dbResponse.ResponseMsg = "Edit security group successful.";
+                        _dbResponse.ResponseCode = "01";
+                        _dbResponse.ResponseMsg = "Creating security group failed";
                     }
-                  
                 }
                 await reader.CloseAsync();
                 _databaseHandler.CloseResources();
